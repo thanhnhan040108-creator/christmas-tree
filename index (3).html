@@ -6,11 +6,660 @@
   <title>🎄 Merry Christmas — Tree</title>
   <meta name="theme-color" content="#0b132b" />
   <style>
-    /* (Styles unchanged for brevity in this generator file) */
+    :root{
+      --bg1:#050816;
+      --bg2:#0b132b;
+      --glow:#7cffc8;
+      --gold:#ffd56a;
+      --red:#ff3b6b;
+      --blue:#4bd2ff;
+      --pink:#ff7ad9;
+      --lime:#b6ff5f;
+      --ice:#dff7ff;
+      --shadow: 0 20px 80px rgba(0,0,0,.55);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100svh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:#eaf2ff;
+      background:
+        radial-gradient(900px 600px at 20% 20%, rgba(123,92,255,.28), transparent 60%),
+        radial-gradient(700px 500px at 80% 30%, rgba(75,210,255,.18), transparent 55%),
+        radial-gradient(900px 700px at 50% 110%, rgba(124,255,200,.18), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+
+    /* subtle stars in background */
+    .stars{
+      position:fixed; inset:-20%;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.55) 50%, transparent 52%),
+        radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,.45) 50%, transparent 52%),
+        radial-gradient(1px 1px at 70% 10%, rgba(255,255,255,.55) 50%, transparent 52%),
+        radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,.45) 50%, transparent 52%),
+        radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,.35) 50%, transparent 52%),
+        radial-gradient(1px 1px at 15% 55%, rgba(255,255,255,.35) 50%, transparent 52%),
+        radial-gradient(1px 1px at 95% 35%, rgba(255,255,255,.35) 50%, transparent 52%);
+      background-size: 300px 260px;
+      opacity:.55;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,.25));
+      animation: drift 22s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes drift{
+      from{ transform: translate3d(0,0,0) }
+      to{ transform: translate3d(-6%, 4%, 0) }
+    }
+
+    .wrap{
+      position:relative;
+      min-height:100svh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    .card{
+      width:min(900px, 92vw);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .header{
+      padding: 18px 20px 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .title{
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .title h1{
+      margin:0;
+      font-size: clamp(18px, 2.6vw, 24px);
+      letter-spacing: .3px;
+    }
+    .title p{
+      margin:0;
+      opacity:.85;
+      font-size: 13px;
+      line-height:1.35;
+    }
+
+    .controls{
+      display:flex; flex-wrap:wrap;
+      gap:10px;
+      justify-content:flex-end;
+      align-items:center;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,18,45,.55);
+      color:#eaf2ff;
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size: 12px;
+      letter-spacing:.2px;
+      transition: transform .12s ease, border-color .2s ease, background .2s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(124,255,200,.35); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+
+    .toggle{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,18,45,.55);
+      font-size:12px;
+      font-weight:600;
+      user-select:none;
+    }
+    .toggle input{ accent-color: var(--glow); }
+
+    .stage{
+      position:relative;
+      height: clamp(430px, 62vh, 620px);
+      display:grid;
+      place-items:center;
+      padding: 12px 18px 22px;
+    }
+
+    /* Snow canvas */
+    canvas#snow{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      pointer-events:none;
+      opacity:.95;
+    }
+
+    /* “Ground” */
+    .ground{
+      position:absolute;
+      bottom: 18px;
+      width:min(720px, 88%);
+      height: 62px;
+      border-radius: 999px;
+      background: radial-gradient(70% 120% at 50% 0%, rgba(255,255,255,.30), rgba(255,255,255,.08) 60%, rgba(0,0,0,0) 72%);
+      filter: blur(.2px);
+      opacity:.9;
+    }
+
+    /* Tree container */
+    .tree{
+      position:relative;
+      width: min(420px, 78vw);
+      height: 100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-end;
+      transform: translateY(8px);
+    }
+
+    /* star */
+    .star{
+      position:absolute;
+      top: 18px;
+      width: 58px;
+      height: 58px;
+      filter: drop-shadow(0 0 22px rgba(255,213,106,.55));
+      animation: starPulse 1.6s ease-in-out infinite;
+      z-index: 9;
+    }
+    @keyframes starPulse{
+      0%,100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 18px rgba(255,213,106,.45)); }
+      50% { transform: translateY(-2px) scale(1.06); filter: drop-shadow(0 0 28px rgba(255,213,106,.70)); }
+    }
+    .star:before{
+      content:"";
+      position:absolute; inset:0;
+      background: conic-gradient(from 0deg,
+        rgba(255,213,106,1),
+        rgba(255,244,199,1),
+        rgba(255,213,106,1));
+      clip-path: polygon(50% 0%, 61% 34%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 34%);
+      border-radius: 10px;
+    }
+    .star:after{
+      content:"";
+      position:absolute; inset:-18px;
+      background: radial-gradient(circle, rgba(255,213,106,.18), transparent 65%);
+    }
+
+    /* Tree layers */
+    .layer{
+      position:relative;
+      width:100%;
+      display:grid;
+      place-items:center;
+      margin-top: -22px;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,.35));
+    }
+    .leaf{
+      width: 0;
+      height: 0;
+      border-left: 170px solid transparent;
+      border-right: 170px solid transparent;
+      border-bottom: 220px solid rgba(27, 170, 108, .95);
+      position:relative;
+      border-radius: 18px;
+    }
+    .layer:nth-child(2) .leaf{
+      border-left-width: 205px;
+      border-right-width:205px;
+      border-bottom-width: 260px;
+      border-bottom-color: rgba(20, 150, 95, .96);
+    }
+    .layer:nth-child(3) .leaf{
+      border-left-width: 240px;
+      border-right-width:240px;
+      border-bottom-width: 310px;
+      border-bottom-color: rgba(16, 132, 84, .97);
+    }
+
+    /* glossy shading */
+    .leaf::before{
+      content:"";
+      position:absolute;
+      left:-160px; right:-160px;
+      top: 24px;
+      height: 60%;
+      background: radial-gradient(60% 80% at 35% 10%, rgba(255,255,255,.18), transparent 55%),
+                  radial-gradient(70% 90% at 65% 35%, rgba(0,0,0,.18), transparent 60%);
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+      opacity:.7;
+      pointer-events:none;
+    }
+
+    /* Garland */
+    .garland{
+      position:absolute;
+      left: 50%;
+      top: 54%;
+      width: 82%;
+      height: 42%;
+      transform: translateX(-50%);
+      border: 3px solid rgba(255,255,255,.10);
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      border-radius: 0 0 999px 999px;
+      opacity:.9;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,.25));
+      pointer-events:none;
+    }
+    .garland::after{
+      content:"";
+      position:absolute; inset:-6px;
+      border-radius: 0 0 999px 999px;
+      background: linear-gradient(90deg, rgba(255,59,107,.0), rgba(255,59,107,.18), rgba(75,210,255,.16), rgba(182,255,95,.18), rgba(255,122,217,.14), rgba(255,59,107,.0));
+      mask: radial-gradient(110% 70% at 50% 105%, #000 62%, transparent 64%);
+      opacity:.75;
+    }
+
+    /* Ornaments */
+    .orn{
+      position:absolute;
+      width: 18px; height: 18px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,.25) 18%, rgba(255,255,255,0) 35%),
+                  radial-gradient(circle at 50% 60%, var(--c1), var(--c2));
+      box-shadow: 0 10px 18px rgba(0,0,0,.28);
+      transform: translate(-50%, -50%);
+      animation: bob 2.6s ease-in-out infinite;
+    }
+    @keyframes bob{
+      0%,100%{ transform: translate(-50%,-50%) }
+      50%{ transform: translate(-50%,-54%) }
+    }
+
+    /* Lights */
+    .light{
+      position:absolute;
+      width: 10px; height: 10px;
+      border-radius: 999px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(255,255,255,.95), var(--lc));
+      box-shadow:
+        0 0 16px 3px rgba(255,255,255,.12),
+        0 0 26px 6px color-mix(in oklab, var(--lc) 55%, transparent);
+      opacity: .95;
+      animation: blink 1.2s infinite steps(2, end);
+    }
+    @keyframes blink{
+      0%{ filter: brightness(1); opacity:.9 }
+      50%{ filter: brightness(1.9); opacity:1 }
+      100%{ filter: brightness(1); opacity:.9 }
+    }
+
+    /* trunk */
+    .trunk{
+      position:absolute;
+      bottom: 44px;
+      width: 96px;
+      height: 120px;
+      border-radius: 18px;
+      background:
+        radial-gradient(60px 40px at 30% 20%, rgba(255,255,255,.14), transparent 60%),
+        linear-gradient(180deg, #8a4f2b, #5a2f18);
+      box-shadow: 0 22px 35px rgba(0,0,0,.4);
+      z-index: 2;
+    }
+
+    /* gifts */
+    .gifts{
+      position:absolute;
+      bottom: 8px;
+      display:flex;
+      gap: 14px;
+      align-items:flex-end;
+      z-index: 3;
+    }
+    .gift{
+      width: 74px; height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.16);
+      position:relative;
+      box-shadow: 0 16px 26px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .gift::before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(60px 40px at 20% 20%, rgba(255,255,255,.22), transparent 60%);
+    }
+    .gift .ribbon{
+      position:absolute; inset:0;
+      background:
+        linear-gradient(90deg, transparent 42%, rgba(255,255,255,.0) 42%),
+        linear-gradient(90deg, transparent 46%, rgba(255,255,255,.0) 46%);
+    }
+    .gift .ribbon::before{
+      content:"";
+      position:absolute; left: 50%; top:0;
+      width: 16px; height:100%;
+      transform: translateX(-50%);
+      background: color-mix(in oklab, var(--rc) 75%, rgba(255,255,255,.25));
+      opacity:.92;
+    }
+    .gift .ribbon::after{
+      content:"";
+      position:absolute; left:0; top: 50%;
+      width: 100%; height: 14px;
+      transform: translateY(-50%);
+      background: color-mix(in oklab, var(--rc) 75%, rgba(255,255,255,.20));
+      opacity:.92;
+    }
+    .gift .bow{
+      position:absolute;
+      left:50%; top: 6px;
+      transform: translateX(-50%);
+      width: 34px; height: 18px;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.28));
+    }
+    .gift .bow:before,
+    .gift .bow:after{
+      content:"";
+      position:absolute; top:0;
+      width: 16px; height: 16px;
+      border-radius: 999px 999px 999px 0;
+      background: color-mix(in oklab, var(--rc) 78%, rgba(255,255,255,.18));
+      transform: rotate(45deg);
+    }
+    .gift .bow:before{ left:2px; }
+    .gift .bow:after{
+      right:2px;
+      border-radius: 999px 999px 0 999px;
+      transform: rotate(-45deg);
+    }
+
+    /* footer note */
+    .footer{
+      padding: 0 20px 18px;
+      opacity:.8;
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(10,18,45,.45);
+    }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background: var(--glow);
+      box-shadow: 0 0 18px 4px rgba(124,255,200,.22);
+      animation: blink 1.1s infinite steps(2,end);
+    }
+
+    /* Responsive tweaks */
+    @media (max-width:520px){
+      .controls{ justify-content:flex-start }
+      .gifts{ gap:10px; transform: scale(.92); }
+      .trunk{ transform: scale(.92); }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .stars, .star, .orn, .light{ animation:none !important; }
+      canvas#snow{ display:none; }
+    }
   </style>
 </head>
 <body>
-  <h1>🎄 File index.html đã được tạo</h1>
-  <p>Bạn hãy copy toàn bộ code cây Noel ở tin nhắn trước và dán vào file này nếu cần chỉnh sửa.</p>
-</body>
-</html>
+  <div class="stars"></div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <div class="title">
+          <h1>🎄 Cây Noel “siêu đẹp” (web) — chạy được trên GitHub Pages</h1>
+          <p>Đèn nhấp nháy + bóng trang trí + sao phát sáng + tuyết rơi. Một file duy nhất: <b>index.html</b>.</p>
+        </div>
+
+        <div class="controls">
+          <label class="toggle">
+            <input id="snowToggle" type="checkbox" checked />
+            Tuyết
+          </label>
+          <button class="btn" id="randomize">🎁 Random trang trí</button>
+          <button class="btn" id="speed">⚡ Tốc độ: Vừa</button>
+        </div>
+      </div>
+
+      <div class="stage">
+        <canvas id="snow"></canvas>
+        <div class="ground"></div>
+
+        <div class="tree" id="tree">
+          <div class="star" aria-hidden="true"></div>
+
+          <!-- 3 layers -->
+          <div class="layer" data-layer="1">
+            <div class="leaf">
+              <div class="garland"></div>
+            </div>
+          </div>
+          <div class="layer" data-layer="2">
+            <div class="leaf">
+              <div class="garland"></div>
+            </div>
+          </div>
+          <div class="layer" data-layer="3">
+            <div class="leaf">
+              <div class="garland"></div>
+            </div>
+          </div>
+
+          <div class="trunk"></div>
+
+          <div class="gifts" aria-hidden="true">
+            <div class="gift" style="--rc: var(--red)">
+              <div class="ribbon"></div><div class="bow"></div>
+            </div>
+            <div class="gift" style="--rc: var(--blue)">
+              <div class="ribbon"></div><div class="bow"></div>
+            </div>
+            <div class="gift" style="--rc: var(--gold)">
+              <div class="ribbon"></div><div class="bow"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <span class="badge"><span class="dot"></span> Tip: bật GitHub Pages là có link share ngay</span>
+        <span class="badge">Made with HTML + CSS + JS ✨</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== Ornament & light generator ======
+    const COLORS = [
+      ["var(--red)",  "#ff3b6b"],
+      ["var(--blue)", "#4bd2ff"],
+      ["var(--gold)", "#ffd56a"],
+      ["var(--pink)", "#ff7ad9"],
+      ["var(--lime)", "#b6ff5f"],
+      ["var(--ice)",  "#dff7ff"],
+    ];
+
+    const tree = document.getElementById("tree");
+    const layers = [...document.querySelectorAll(".layer")];
+
+    function clearDecor(){
+      tree.querySelectorAll(".orn, .light").forEach(el => el.remove());
+    }
+
+    // Place items by percentage positions inside each leaf triangle-ish region
+    function decorate(){
+      clearDecor();
+
+      // more items on lower layers
+      const config = [
+        { layer: 1, ornaments: 8,  lights: 14, top: 78 },
+        { layer: 2, ornaments: 12, lights: 18, top: 70 },
+        { layer: 3, ornaments: 16, lights: 24, top: 63 },
+      ];
+
+      for (const c of config){
+        const layer = layers[c.layer - 1];
+        const leaf = layer.querySelector(".leaf");
+        const rect = leaf.getBoundingClientRect();
+
+        // helper: triangle width shrinks as y goes up
+        const place = (count, className, makeStyle) => {
+          for (let i = 0; i < count; i++){
+            const yP = rand(c.top, 97); // percent within leaf height
+            const widthAtY = (yP/100); // wider near bottom
+            const xSpan = 10 + 80 * widthAtY; // percent span
+            const xP = 50 + rand(-xSpan/2, xSpan/2);
+
+            const el = document.createElement("div");
+            el.className = className;
+            el.style.left = xP + "%";
+            el.style.top  = yP + "%";
+            makeStyle(el, i);
+
+            leaf.appendChild(el);
+          }
+        };
+
+        place(c.ornaments, "orn", (el) => {
+          const [c1, c2] = pick(COLORS);
+          el.style.setProperty("--c1", c1);
+          el.style.setProperty("--c2", c2);
+          el.style.width = rand(14, 20) + "px";
+          el.style.height = el.style.width;
+          el.style.animationDelay = (Math.random()*1.2).toFixed(2) + "s";
+          el.style.animationDuration = (2.2 + Math.random()*1.6).toFixed(2) + "s";
+        });
+
+        place(c.lights, "light", (el, idx) => {
+          const [cssVar] = pick(COLORS);
+          el.style.setProperty("--lc", cssVar);
+          el.style.width = rand(8, 11) + "px";
+          el.style.height = el.style.width;
+          el.style.animationDelay = (Math.random()*1.0).toFixed(2) + "s";
+          el.style.animationDuration = (blinkBase + Math.random()*blinkJitter).toFixed(2) + "s";
+        });
+      }
+    }
+
+    function rand(a,b){ return a + Math.random()*(b-a); }
+    function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+    // ====== Blinking speed control ======
+    let speedMode = 1; // 0 slow, 1 medium, 2 fast
+    let blinkBase = 1.2;
+    let blinkJitter = 1.1;
+
+    const speedBtn = document.getElementById("speed");
+    function applySpeed(){
+      if (speedMode === 0){
+        blinkBase = 1.8; blinkJitter = 1.4;
+        speedBtn.textContent = "🐢 Tốc độ: Chậm";
+      } else if (speedMode === 1){
+        blinkBase = 1.2; blinkJitter = 1.1;
+        speedBtn.textContent = "⚡ Tốc độ: Vừa";
+      } else {
+        blinkBase = 0.65; blinkJitter = 0.75;
+        speedBtn.textContent = "⚡⚡ Tốc độ: Nhanh";
+      }
+      // re-apply durations to current lights
+      tree.querySelectorAll(".light").forEach(el => {
+        el.style.animationDuration = (blinkBase + Math.random()*blinkJitter).toFixed(2) + "s";
+      });
+    }
+
+    speedBtn.addEventListener("click", () => {
+      speedMode = (speedMode + 1) % 3;
+      applySpeed();
+    });
+
+    document.getElementById("randomize").addEventListener("click", decorate);
+
+    // ====== Snow canvas ======
+    const canvas = document.getElementById("snow");
+    const ctx = canvas.getContext("2d");
+    let flakes = [];
+    let snowOn = true;
+
+    function resize(){
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      canvas.width = Math.floor(canvas.clientWidth * dpr);
+      canvas.height = Math.floor(canvas.clientHeight * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener("resize", resize);
+
+    function initSnow(){
+      flakes = [];
+      const count = Math.floor(Math.min(220, Math.max(120, canvas.clientWidth / 3)));
+      for (let i=0;i<count;i++){
+        flakes.push({
+          x: Math.random()*canvas.clientWidth,
+          y: Math.random()*canvas.clientHeight,
+          r: rand(0.7, 2.2),
+          s: rand(0.35, 1.25),
+          a: rand(0.35, 0.9),
+          w: rand(0.2, 0.9)
+        });
+      }
+    }
+
+    function drawSnow(){
+      if (!snowOn) return;
+      ctx.clearRect(0,0,canvas.clientWidth, canvas.clientHeight);
+
+      for (const f of flakes){
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(255,255,255,${f.a})`;
+        ctx.fill();
+
+        // update
+        f.y += f.s;
+        f.x += Math.sin((f.y*0.01)) * f.w;
+
+        if (f.y > canvas.clientHeight + 10){
+          f.y = -10;
+          f.x = Math.random()*canvas.clientWidth;
+        }
+      }
+    }
+
+    function tick(){
+      drawSnow();
+      requestAnimationFrame(tick);
+    }
+
+    document.getElementById("snowToggle").ad
