@@ -1,342 +1,671 @@
 <!doctype html>
 <html lang="vi">
 <head>
-<meta charset="utf-8">
-<title>🎄 Noel Tree Pro</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🎄 Noel Tree Pro — We Wish You a Merry Christmas</title>
+  <meta name="theme-color" content="#0b132b" />
 
-<style>
-:root{
-  --bg1:#050816;
-  --bg2:#0b132b;
-  --red:#ff3b6b;
-  --blue:#4bd2ff;
-  --gold:#ffd56a;
-  --pink:#ff7ad9;
-  --lime:#b6ff5f;
-  --ice:#dff7ff;
-}
+  <style>
+    :root{
+      --bg1:#050816;
+      --bg2:#0b132b;
+      --card: rgba(255,255,255,.06);
+      --line: rgba(255,255,255,.12);
 
-*{box-sizing:border-box}
-body{
-  margin:0;
-  min-height:100vh;
-  font-family: system-ui, Arial;
-  background: linear-gradient(180deg,var(--bg1),var(--bg2));
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#fff;
-  overflow:hidden;
-}
+      --green1:#1aa36f;
+      --green2:#148f60;
+      --green3:#0f7f55;
 
-.card{
-  width:min(920px,95vw);
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:22px;
-  padding:18px;
-}
+      --red:#ff3b6b;
+      --blue:#4bd2ff;
+      --gold:#ffd56a;
+      --pink:#ff7ad9;
+      --lime:#b6ff5f;
+      --ice:#dff7ff;
 
-h1{
-  text-align:center;
-  margin:6px 0 4px;
-}
+      --shadow: 0 20px 80px rgba(0,0,0,.55);
+    }
 
-.message{
-  text-align:center;
-  font-size:16px;
-  margin-bottom:12px;
-  opacity:.75;
-  transition:.4s;
-}
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100svh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:#eaf2ff;
+      background:
+        radial-gradient(900px 600px at 20% 20%, rgba(123,92,255,.28), transparent 60%),
+        radial-gradient(700px 500px at 80% 30%, rgba(75,210,255,.18), transparent 55%),
+        radial-gradient(900px 700px at 50% 110%, rgba(124,255,200,.18), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
 
-.message.active{
-  opacity:1;
-  color:var(--gold);
-  text-shadow:
-    0 0 10px var(--gold),
-    0 0 25px var(--gold);
-}
+    .stars{
+      position:fixed; inset:-20%;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.55) 50%, transparent 52%),
+        radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,.45) 50%, transparent 52%),
+        radial-gradient(1px 1px at 70% 10%, rgba(255,255,255,.55) 50%, transparent 52%),
+        radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,.45) 50%, transparent 52%),
+        radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,.35) 50%, transparent 52%);
+      background-size: 320px 280px;
+      opacity:.55;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.22));
+      animation: drift 22s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes drift{
+      from{ transform: translate3d(0,0,0) }
+      to{ transform: translate3d(-6%, 4%, 0) }
+    }
 
-.controls{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin-bottom:10px;
-}
+    .wrap{
+      position:relative;
+      min-height:100svh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
 
-button{
-  background:#0f1738;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.2);
-  padding:10px 14px;
-  border-radius:12px;
-  cursor:pointer;
-  font-weight:700;
-}
+    .card{
+      width:min(980px, 94vw);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+      position:relative;
+    }
 
-.stage{
-  position:relative;
-  height:520px;
-  display:flex;
-  justify-content:center;
-  align-items:flex-end;
-}
+    .header{
+      padding: 18px 20px 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
 
-canvas{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-}
+    .title{
+      display:flex; flex-direction:column; gap:6px;
+      min-width: 220px;
+    }
+    .title h1{
+      margin:0;
+      font-size: clamp(18px, 2.6vw, 24px);
+      letter-spacing: .3px;
+    }
+    .title p{
+      margin:0;
+      opacity:.85;
+      font-size: 13px;
+      line-height:1.35;
+      max-width: 600px;
+    }
 
-.tree{
-  position:relative;
-  width:360px;
-  height:520px;
-}
+    .message{
+      margin-top:6px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,18,45,.38);
+      font-weight:700;
+      letter-spacing:.2px;
+      color:#eaf2ff;
+      opacity:.82;
+      transition: opacity .25s ease, text-shadow .25s ease, color .25s ease, border-color .25s ease;
+    }
+    .message.active{
+      opacity:1;
+      color: var(--gold);
+      border-color: rgba(255,213,106,.35);
+      text-shadow:
+        0 0 10px rgba(255,213,106,.55),
+        0 0 24px rgba(255,213,106,.35);
+    }
 
-.star{
-  position:absolute;
-  top:10px;
-  left:50%;
-  transform:translateX(-50%);
-  width:50px;
-  height:50px;
-  background:var(--gold);
-  clip-path: polygon(
-    50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
-    50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
-  );
-  box-shadow:0 0 30px var(--gold);
-}
+    .controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
 
-.layer{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  width:0;height:0;
-  border-left:170px solid transparent;
-  border-right:170px solid transparent;
-  border-bottom:220px solid #1aa36f;
-}
+    .btn, .toggle{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,18,45,.55);
+      color:#eaf2ff;
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:800;
+      font-size: 12px;
+      letter-spacing:.2px;
+      user-select:none;
+      transition: transform .12s ease, border-color .2s ease, background .2s ease;
+    }
+    .btn:hover, .toggle:hover{ transform: translateY(-1px); border-color: rgba(124,255,200,.35); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
 
-.layer:nth-child(2){top:50px}
-.layer:nth-child(3){
-  top:140px;
-  border-left-width:200px;
-  border-right-width:200px;
-  border-bottom-width:260px;
-}
-.layer:nth-child(4){
-  top:260px;
-  border-left-width:230px;
-  border-right-width:230px;
-  border-bottom-width:300px;
-}
+    .toggle{
+      display:flex; gap:8px; align-items:center;
+      cursor:default;
+      font-weight:700;
+    }
+    .toggle input{ accent-color: #7cffc8; cursor:pointer; }
 
-.orn,.light{
-  position:absolute;
-  border-radius:50%;
-  transform:translate(-50%,-50%);
-}
+    .stage{
+      position:relative;
+      height: clamp(470px, 64vh, 700px);
+      display:grid;
+      place-items:center;
+      padding: 12px 18px 26px;
+    }
 
-.orn{
-  width:16px;height:16px;
-  box-shadow:0 0 15px currentColor;
-}
+    canvas#snow{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      pointer-events:none;
+      opacity:.95;
+    }
 
-.light{
-  width:10px;height:10px;
-  background:currentColor;
-  box-shadow:0 0 18px currentColor;
-  animation:blink 1.2s infinite;
-}
+    .ground{
+      position:absolute;
+      bottom: 18px;
+      width:min(760px, 90%);
+      height: 70px;
+      border-radius: 999px;
+      background: radial-gradient(70% 120% at 50% 0%, rgba(255,255,255,.30), rgba(255,255,255,.08) 60%, rgba(0,0,0,0) 72%);
+      opacity:.92;
+      pointer-events:none;
+    }
 
-@keyframes blink{
-  50%{opacity:.3}
-}
+    .tree{
+      position:relative;
+      width: min(460px, 84vw);
+      height: 100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-end;
+      transform: translateY(8px);
+    }
 
-.trunk{
-  position:absolute;
-  bottom:60px;
-  left:50%;
-  transform:translateX(-50%);
-  width:80px;
-  height:110px;
-  background:#6b3a1e;
-  border-radius:14px;
-}
+    .star{
+      position:absolute;
+      top: 12px;
+      width: 60px;
+      height: 60px;
+      filter: drop-shadow(0 0 22px rgba(255,213,106,.55));
+      animation: starPulse 1.6s ease-in-out infinite;
+      z-index: 9;
+    }
+    @keyframes starPulse{
+      0%,100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 18px rgba(255,213,106,.45)); }
+      50% { transform: translateY(-2px) scale(1.06); filter: drop-shadow(0 0 28px rgba(255,213,106,.70)); }
+    }
+    .star:before{
+      content:"";
+      position:absolute; inset:0;
+      background: conic-gradient(from 0deg, #ffd56a, #fff4c7, #ffd56a);
+      clip-path: polygon(50% 0%, 61% 34%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 34%);
+      border-radius: 10px;
+    }
+    .star:after{
+      content:"";
+      position:absolute; inset:-18px;
+      background: radial-gradient(circle, rgba(255,213,106,.18), transparent 65%);
+    }
 
-.gifts{
-  position:absolute;
-  bottom:10px;
-  display:flex;
-  gap:12px;
-  left:50%;
-  transform:translateX(-50%);
-}
+    .layer{
+      position:relative;
+      width:100%;
+      display:grid;
+      place-items:center;
+      margin-top: -24px;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,.35));
+    }
+    .leaf{
+      width: 0;
+      height: 0;
+      border-left: 180px solid transparent;
+      border-right: 180px solid transparent;
+      border-bottom: 240px solid rgba(26, 163, 111, .96);
+      position:relative;
+      border-radius: 18px;
+      overflow: visible;
+    }
+    .layer:nth-child(2) .leaf{
+      border-left-width: 218px;
+      border-right-width:218px;
+      border-bottom-width: 280px;
+      border-bottom-color: rgba(20, 143, 96, .97);
+    }
+    .layer:nth-child(3) .leaf{
+      border-left-width: 258px;
+      border-right-width:258px;
+      border-bottom-width: 335px;
+      border-bottom-color: rgba(15, 127, 85, .98);
+    }
 
-.gift{
-  width:70px;
-  height:50px;
-  background:linear-gradient(180deg,#fff3,#fff1);
-  border-radius:12px;
-  border:1px solid #fff4;
-  position:relative;
-}
+    .leaf::before{
+      content:"";
+      position:absolute;
+      left:-180px; right:-180px;
+      top: 26px;
+      height: 60%;
+      background: radial-gradient(60% 80% at 35% 10%, rgba(255,255,255,.18), transparent 55%),
+                  radial-gradient(70% 90% at 65% 35%, rgba(0,0,0,.18), transparent 60%);
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+      opacity:.72;
+      pointer-events:none;
+    }
 
-.gift::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    linear-gradient(90deg,transparent 45%,rgba(255,255,255,.5) 45%,rgba(255,255,255,.5) 55%,transparent 55%),
-    linear-gradient(transparent 45%,rgba(255,255,255,.5) 45%,rgba(255,255,255,.5) 55%,transparent 55%);
-}
+    .orn{
+      position:absolute;
+      width: 18px; height: 18px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,.25) 18%, rgba(255,255,255,0) 35%),
+                  radial-gradient(circle at 50% 60%, var(--c1), var(--c2));
+      box-shadow: 0 12px 18px rgba(0,0,0,.28);
+      transform: translate(-50%, -50%);
+      animation: bob 2.6s ease-in-out infinite;
+    }
+    @keyframes bob{
+      0%,100%{ transform: translate(-50%,-50%) }
+      50%{ transform: translate(-50%,-54%) }
+    }
 
-</style>
+    .light{
+      position:absolute;
+      width: 10px; height: 10px;
+      border-radius: 999px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(255,255,255,.95), var(--lc));
+      box-shadow: 0 0 18px 4px rgba(255,255,255,.10);
+      opacity: .90;
+      transition: transform .12s ease, opacity .12s ease, filter .12s ease;
+    }
+
+    .trunk{
+      position:absolute;
+      bottom: 48px;
+      width: 102px;
+      height: 128px;
+      border-radius: 18px;
+      background:
+        radial-gradient(60px 40px at 30% 20%, rgba(255,255,255,.14), transparent 60%),
+        linear-gradient(180deg, #8a4f2b, #5a2f18);
+      box-shadow: 0 22px 35px rgba(0,0,0,.42);
+      z-index: 2;
+    }
+
+    .gifts{
+      position:absolute;
+      bottom: 6px;
+      display:flex;
+      gap: 14px;
+      align-items:flex-end;
+      z-index: 4;
+    }
+    .gift{
+      width: 78px; height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.16);
+      position:relative;
+      box-shadow: 0 16px 26px rgba(0,0,0,.36);
+      overflow:hidden;
+    }
+    .gift::before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(60px 40px at 20% 20%, rgba(255,255,255,.22), transparent 60%);
+    }
+    .gift .ribbon{ position:absolute; inset:0; }
+    .gift .ribbon::before{
+      content:"";
+      position:absolute; left: 50%; top:0;
+      width: 16px; height:100%;
+      transform: translateX(-50%);
+      background: color-mix(in oklab, var(--rc) 75%, rgba(255,255,255,.25));
+      opacity:.92;
+    }
+    .gift .ribbon::after{
+      content:"";
+      position:absolute; left:0; top: 50%;
+      width: 100%; height: 14px;
+      transform: translateY(-50%);
+      background: color-mix(in oklab, var(--rc) 75%, rgba(255,255,255,.20));
+      opacity:.92;
+    }
+    .gift .bow{
+      position:absolute;
+      left:50%; top: 6px;
+      transform: translateX(-50%);
+      width: 34px; height: 18px;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.28));
+    }
+    .gift .bow:before,
+    .gift .bow:after{
+      content:"";
+      position:absolute; top:0;
+      width: 16px; height: 16px;
+      border-radius: 999px 999px 999px 0;
+      background: color-mix(in oklab, var(--rc) 78%, rgba(255,255,255,.18));
+      transform: rotate(45deg);
+    }
+    .gift .bow:before{ left:2px; }
+    .gift .bow:after{
+      right:2px;
+      border-radius: 999px 999px 0 999px;
+      transform: rotate(-45deg);
+    }
+
+    .footer{
+      padding: 0 20px 18px;
+      opacity:.82;
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(10,18,45,.45);
+    }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background: #7cffc8;
+      box-shadow: 0 0 18px 4px rgba(124,255,200,.22);
+      animation: blinkDot 1.1s infinite steps(2,end);
+    }
+    @keyframes blinkDot{
+      50%{opacity:.35}
+    }
+
+    @media (max-width:520px){
+      .controls{ justify-content:flex-start }
+      .gifts{ gap:10px; transform: scale(.94); }
+      .trunk{ transform: scale(.94); }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .stars, .star, .orn{ animation:none !important; }
+      canvas#snow{ display:none; }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="stars"></div>
 
-<div class="card">
-  <h1>🎄 Merry Christmas 🎄</h1>
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <div class="title">
+          <h1>🎄 Noel Tree Pro</h1>
+          <p>❄️ Tuyết rơi • 💡 Đèn chạy vòng • 🎶 We Wish You a Merry Christmas (bấm Play) • 🎁 Quà dưới gốc</p>
+          <div class="message" id="msg">
+            Chúc các bạn một ngày Giáng Sinh vui vẻ, ấm áp bên gia đình và người mình yêu ❤️
+          </div>
+        </div>
 
-  <div class="message" id="msg">
-    Chúc các bạn một ngày Giáng Sinh vui vẻ, ấm áp bên gia đình và người mình yêu ❤️
-  </div>
+        <div class="controls">
+          <label class="toggle"><input id="snowToggle" type="checkbox" checked> Tuyết</label>
+          <button class="btn" id="randomize">🎁 Random</button>
+          <button class="btn" id="musicBtn">🎶 Play</button>
+        </div>
+      </div>
 
-  <div class="controls">
-    <button id="playBtn">🎶 Play</button>
-  </div>
+      <div class="stage">
+        <canvas id="snow"></canvas>
+        <div class="ground"></div>
 
-  <div class="stage">
-    <canvas id="snow"></canvas>
+        <div class="tree" id="tree">
+          <div class="star" aria-hidden="true"></div>
 
-    <div class="tree" id="tree">
-      <div class="star"></div>
+          <div class="layer"><div class="leaf"></div></div>
+          <div class="layer"><div class="leaf"></div></div>
+          <div class="layer"><div class="leaf"></div></div>
 
-      <div class="layer"></div>
-      <div class="layer"></div>
-      <div class="layer"></div>
+          <div class="trunk"></div>
 
-      <div class="trunk"></div>
+          <div class="gifts" aria-hidden="true">
+            <div class="gift" style="--rc: var(--red)"><div class="ribbon"></div><div class="bow"></div></div>
+            <div class="gift" style="--rc: var(--blue)"><div class="ribbon"></div><div class="bow"></div></div>
+            <div class="gift" style="--rc: var(--gold)"><div class="ribbon"></div><div class="bow"></div></div>
+          </div>
+        </div>
+      </div>
 
-      <div class="gifts">
-        <div class="gift"></div>
-        <div class="gift"></div>
-        <div class="gift"></div>
+      <div class="footer">
+        <span class="badge"><span class="dot"></span> Tip: file phải tên <b>index.html</b> ở root repo</span>
+        <span class="badge">Made with HTML + CSS + JS ✨</span>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-/* ---------- SNOW ---------- */
-const canvas=document.getElementById("snow");
-const ctx=canvas.getContext("2d");
-let flakes=[];
-function resize(){
-  canvas.width=canvas.offsetWidth;
-  canvas.height=canvas.offsetHeight;
-}
-window.onresize=resize;
-resize();
+  <script>
+    // ===================== DECOR: ornaments + lights along garland =====================
+    const COLORS = [
+      ["var(--red)",  "#ff3b6b"],
+      ["var(--blue)", "#4bd2ff"],
+      ["var(--gold)", "#ffd56a"],
+      ["var(--pink)", "#ff7ad9"],
+      ["var(--lime)", "#b6ff5f"],
+      ["var(--ice)",  "#dff7ff"],
+    ];
 
-for(let i=0;i<160;i++){
-  flakes.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    r:Math.random()*2+0.5,
-    s:Math.random()*1+0.5
-  });
-}
+    const tree = document.getElementById("tree");
+    const leaves = [...document.querySelectorAll(".leaf")];
 
-function snow(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  flakes.forEach(f=>{
-    ctx.beginPath();
-    ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
-    ctx.fillStyle="white";
-    ctx.fill();
-    f.y+=f.s;
-    if(f.y>canvas.height){f.y=0;f.x=Math.random()*canvas.width;}
-  });
-  requestAnimationFrame(snow);
-}
-snow();
+    function rand(a,b){ return a + Math.random()*(b-a); }
+    function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
-/* ---------- DECOR ---------- */
-const tree=document.getElementById("tree");
-const colors=["var(--red)","var(--blue)","var(--gold)","var(--pink)","var(--lime)","var(--ice)"];
+    function clearDecor(){
+      tree.querySelectorAll(".orn, .light").forEach(el => el.remove());
+    }
 
-for(let i=0;i<40;i++){
-  const o=document.createElement("div");
-  o.className="orn";
-  o.style.left=Math.random()*320+20+"px";
-  o.style.top=Math.random()*360+80+"px";
-  const c=colors[Math.floor(Math.random()*colors.length)];
-  o.style.background=c;
-  o.style.color=c;
-  tree.appendChild(o);
-}
+    // Create ornaments inside each triangle and lights on a hanging arc
+    function decorate(){
+      clearDecor();
 
-const lights=[];
-for(let i=0;i<30;i++){
-  const l=document.createElement("div");
-  l.className="light";
-  l.style.left=Math.random()*320+20+"px";
-  l.style.top=Math.random()*360+80+"px";
-  const c=colors[Math.floor(Math.random()*colors.length)];
-  l.style.color=c;
-  tree.appendChild(l);
-  lights.push(l);
-}
+      const configs = [
+        { idx: 0, ornaments: 9,  lights: 18 },
+        { idx: 1, ornaments: 13, lights: 22 },
+        { idx: 2, ornaments: 17, lights: 28 },
+      ];
 
-/* ---------- MUSIC + SYNC ---------- */
-let audioCtx=null;
-let playing=false;
-const msg=document.getElementById("msg");
-const btn=document.getElementById("playBtn");
+      for (const c of configs){
+        const leaf = leaves[c.idx];
 
-function tone(freq,time){
-  const o=audioCtx.createOscillator();
-  const g=audioCtx.createGain();
-  o.frequency.value=freq;
-  o.type="sine";
-  g.gain.value=0.15;
-  o.connect(g);
-  g.connect(audioCtx.destination);
-  o.start();
-  o.stop(audioCtx.currentTime+time);
-}
+        // ornaments
+        for (let i=0;i<c.ornaments;i++){
+          const yP = rand(62, 97);
+          const widthAtY = (yP/100);
+          const xSpan = 10 + 82 * widthAtY;
+          const xP = 50 + rand(-xSpan/2, xSpan/2);
 
-btn.onclick=()=>{
-  if(!playing){
-    if(!audioCtx) audioCtx=new AudioContext();
-    msg.classList.add("active");
-    btn.textContent="⏸ Pause";
-    playing=true;
+          const o = document.createElement("div");
+          o.className = "orn";
+          o.style.left = xP + "%";
+          o.style.top  = yP + "%";
+          const [c1, c2] = pick(COLORS);
+          o.style.setProperty("--c1", c1);
+          o.style.setProperty("--c2", c2);
+          const s = rand(14, 20);
+          o.style.width = s + "px";
+          o.style.height = s + "px";
+          o.style.animationDelay = (Math.random()*1.2).toFixed(2) + "s";
+          o.style.animationDuration = (2.2 + Math.random()*1.6).toFixed(2) + "s";
+          leaf.appendChild(o);
+        }
 
-    let i=0;
-    const melody=[523,659,784,659,698,784,880];
-    const interval=setInterval(()=>{
-      if(!playing){clearInterval(interval);return;}
-      tone(melody[i%melody.length],0.25);
-      lights.forEach(l=>{
-        l.style.opacity=Math.random();
+        // lights on garland arc
+        for (let i=0;i<c.lights;i++){
+          const t = i/(c.lights-1);
+          const x = 12 + t*76; // %
+          const arc = 68 + 18*(1 - Math.pow((t*2-1), 2)); // %
+          const l = document.createElement("div");
+          l.className = "light";
+          l.style.left = x + "%";
+          l.style.top  = arc + "%";
+          const [cssVar] = pick(COLORS);
+          l.style.setProperty("--lc", cssVar);
+          const s = rand(8, 11);
+          l.style.width = s + "px";
+          l.style.height = s + "px";
+          leaf.appendChild(l);
+        }
+      }
+    }
+
+    document.getElementById("randomize").addEventListener("click", decorate);
+
+    // ===================== SNOW (canvas) =====================
+    const canvas = document.getElementById("snow");
+    const ctx = canvas.getContext("2d");
+    let flakes = [];
+    let snowOn = true;
+
+    function resize(){
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      canvas.width = Math.floor(canvas.clientWidth * dpr);
+      canvas.height = Math.floor(canvas.clientHeight * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener("resize", () => { resize(); initSnow(); });
+
+    function initSnow(){
+      flakes = [];
+      const count = Math.floor(Math.min(260, Math.max(140, canvas.clientWidth / 3)));
+      for (let i=0;i<count;i++){
+        flakes.push({
+          x: Math.random()*canvas.clientWidth,
+          y: Math.random()*canvas.clientHeight,
+          r: rand(0.7, 2.4),
+          s: rand(0.35, 1.35),
+          a: rand(0.28, 0.9),
+          w: rand(0.15, 0.95)
+        });
+      }
+    }
+
+    function drawSnow(){
+      if (!snowOn) return;
+      ctx.clearRect(0,0,canvas.clientWidth, canvas.clientHeight);
+      for (const f of flakes){
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(255,255,255,${f.a})`;
+        ctx.fill();
+
+        f.y += f.s;
+        f.x += Math.sin((f.y*0.01)) * f.w;
+
+        if (f.y > canvas.clientHeight + 10){
+          f.y = -10;
+          f.x = Math.random()*canvas.clientWidth;
+        }
+      }
+    }
+
+    function tick(){
+      drawSnow();
+      requestAnimationFrame(tick);
+    }
+
+    document.getElementById("snowToggle").addEventListener("change", (e) => {
+      snowOn = e.target.checked;
+      canvas.style.display = snowOn ? "block" : "none";
+      if (snowOn){ initSnow(); }
+    });
+
+    // ===================== MUSIC: We Wish You a Merry Christmas + light sync =====================
+    // NOTE: No autoplay. Only plays after click.
+    const msg = document.getElementById("msg");
+    const musicBtn = document.getElementById("musicBtn");
+
+    let audioCtx = null;
+    let master = null;
+    let delay = null;
+    let fb = null;
+    let wet = null;
+
+    let musicOn = false;
+    let stopToken = { stop:false };
+
+    function midiToFreq(m){ return 440 * Math.pow(2, (m-69)/12); }
+
+    // Simple "bell-ish" synth note
+    function note(freq, t, dur, gain, pan){
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      const p = audioCtx.createStereoPanner();
+
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(freq, t);
+
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+      osc.connect(g);
+      g.connect(p);
+      p.pan.setValueAtTime(pan || 0, t);
+
+      p.connect(master);
+      p.connect(delay);
+
+      osc.start(t);
+      osc.stop(t + dur + 0.02);
+    }
+
+    function pulseLights(strength){
+      const lights = tree.querySelectorAll(".light");
+      // strength: 0..1
+      lights.forEach((l, idx) => {
+        // random-ish but stable enough
+        const r = Math.random();
+        const glow = 0.65 + 0.55*strength + 0.10*r;
+        l.style.opacity = String(Math.min(1, glow));
+        l.style.transform = `translate(-50%,-50%) scale(${0.92 + 0.55*strength + 0.15*r})`;
+        l.style.filter = `brightness(${1 + 2.2*strength})`;
       });
-      i++;
-    },300);
+    }
 
-  }else{
-    playing=false;
-    msg.classList.remove("active");
-    btn.textContent="🎶 Play";
-  }
-};
-</script>
+    async function ensureAudio(){
+      if (!audioCtx){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-</body>
-</html>
+        master = audioCtx.createGain();
+        master.gain.value = 0.18;
+        master.connect(audioCtx.destination);
+
+        delay = audioCtx.createDelay(0.35);
+        delay.delayTime.value = 0.18;
+
+        fb = audioCtx.createGain();
+        fb.gain.value = 0.24;
+        delay.connect(fb);
+        fb.connect(delay);
+
+        wet = audioCtx.createGain();
+        wet.gain.value = 0.35;
+        delay.connect(wet);
+        wet.connect(master);
+      }
+      await audioCtx.resume();
+    }
+
+    // “We Wish You a Merry Christmas” melody (recogn
