@@ -1,117 +1,218 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <title>🎄 Christmas Tree Web</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<title>🎄 Noel Tree Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    :root{
-      --bg1:#050816;
-      --bg2:#0b132b;
-      --red:#ff3b6b;
-      --blue:#4bd2ff;
-      --gold:#ffd56a;
-      --pink:#ff7ad9;
-      --lime:#b6ff5f;
-      --ice:#dff7ff;
-    }
+<style>
+:root{
+  --bg1:#050816;
+  --bg2:#0b132b;
+  --red:#ff3b6b;
+  --blue:#4bd2ff;
+  --gold:#ffd56a;
+  --pink:#ff7ad9;
+  --lime:#b6ff5f;
+  --ice:#dff7ff;
+}
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      min-height:100vh;
-      font-family: system-ui, Arial;
-      background: linear-gradient(180deg,var(--bg1),var(--bg2));
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      color:#fff;
-      overflow:hidden;
-    }
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family: system-ui, Arial;
+  background: linear-gradient(180deg,var(--bg1),var(--bg2));
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+  overflow:hidden;
+}
 
-    h1{
-      text-align:center;
-      margin-bottom:10px;
-    }
+.card{
+  width:min(920px,95vw);
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:22px;
+  padding:18px;
+}
 
-    .tree{
-      position:relative;
-      width:320px;
-      height:520px;
-    }
+h1{
+  text-align:center;
+  margin:6px 0 4px;
+}
 
-    /* STAR */
-    .star{
-      position:absolute;
-      top:0;
-      left:50%;
-      transform:translateX(-50%);
-      width:50px;
-      height:50px;
-      background:var(--gold);
-      clip-path: polygon(
-        50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
-        50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
-      );
-      box-shadow:0 0 25px var(--gold);
-      animation: glow 1.5s infinite alternate;
-    }
+.message{
+  text-align:center;
+  font-size:16px;
+  margin-bottom:12px;
+  opacity:.75;
+  transition:.4s;
+}
 
-    @keyframes glow{
-      from{transform:translateX(-50%) scale(1)}
-      to{transform:translateX(-50%) scale(1.1)}
-    }
+.message.active{
+  opacity:1;
+  color:var(--gold);
+  text-shadow:
+    0 0 10px var(--gold),
+    0 0 25px var(--gold);
+}
 
-    /* TREE LAYERS */
-    .layer{
-      position:absolute;
-      left:50%;
-      transform:translateX(-50%);
-      width:0;
-      height:0;
-      border-left:160px solid transparent;
-      border-right:160px solid transparent;
-      border-bottom:200px solid #1aa36f;
-    }
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:10px;
+}
 
-    .layer:nth-child(2){top:40px}
-    .layer:nth-child(3){top:120px; border-left-width:190px; border-right-width:190px; border-bottom-width:240px;}
-    .layer:nth-child(4){top:220px; border-left-width:220px; border-right-width:220px; border-bottom-width:280px;}
+button{
+  background:#0f1738;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.2);
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:700;
+}
 
-    /* ORNAMENT */
-    .orn{
-      position:absolute;
-      width:14px;
-      height:14px;
-      border-radius:50%;
-      background:red;
-      box-shadow:0 0 12px currentColor;
-      animation: blink 1.2s infinite;
-    }
+.stage{
+  position:relative;
+  height:520px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+}
 
-    @keyframes blink{
-      50%{opacity:0.4}
-    }
+canvas{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
 
-    /* TRUNK */
-    .trunk{
-      position:absolute;
-      bottom:0;
-      left:50%;
-      transform:translateX(-50%);
-      width:70px;
-      height:90px;
-      background:#6b3a1e;
-      border-radius:12px;
-    }
-  </style>
+.tree{
+  position:relative;
+  width:360px;
+  height:520px;
+}
+
+.star{
+  position:absolute;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  width:50px;
+  height:50px;
+  background:var(--gold);
+  clip-path: polygon(
+    50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
+    50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+  );
+  box-shadow:0 0 30px var(--gold);
+}
+
+.layer{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  width:0;height:0;
+  border-left:170px solid transparent;
+  border-right:170px solid transparent;
+  border-bottom:220px solid #1aa36f;
+}
+
+.layer:nth-child(2){top:50px}
+.layer:nth-child(3){
+  top:140px;
+  border-left-width:200px;
+  border-right-width:200px;
+  border-bottom-width:260px;
+}
+.layer:nth-child(4){
+  top:260px;
+  border-left-width:230px;
+  border-right-width:230px;
+  border-bottom-width:300px;
+}
+
+.orn,.light{
+  position:absolute;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+}
+
+.orn{
+  width:16px;height:16px;
+  box-shadow:0 0 15px currentColor;
+}
+
+.light{
+  width:10px;height:10px;
+  background:currentColor;
+  box-shadow:0 0 18px currentColor;
+  animation:blink 1.2s infinite;
+}
+
+@keyframes blink{
+  50%{opacity:.3}
+}
+
+.trunk{
+  position:absolute;
+  bottom:60px;
+  left:50%;
+  transform:translateX(-50%);
+  width:80px;
+  height:110px;
+  background:#6b3a1e;
+  border-radius:14px;
+}
+
+.gifts{
+  position:absolute;
+  bottom:10px;
+  display:flex;
+  gap:12px;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+.gift{
+  width:70px;
+  height:50px;
+  background:linear-gradient(180deg,#fff3,#fff1);
+  border-radius:12px;
+  border:1px solid #fff4;
+  position:relative;
+}
+
+.gift::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,transparent 45%,rgba(255,255,255,.5) 45%,rgba(255,255,255,.5) 55%,transparent 55%),
+    linear-gradient(transparent 45%,rgba(255,255,255,.5) 45%,rgba(255,255,255,.5) 55%,transparent 55%);
+}
+
+</style>
 </head>
 
 <body>
 
-  <div>
-    <h1>🎄 Merry Christmas 🎄</h1>
+<div class="card">
+  <h1>🎄 Merry Christmas 🎄</h1>
+
+  <div class="message" id="msg">
+    Chúc các bạn một ngày Giáng Sinh vui vẻ, ấm áp bên gia đình và người mình yêu ❤️
+  </div>
+
+  <div class="controls">
+    <button id="playBtn">🎶 Play</button>
+  </div>
+
+  <div class="stage">
+    <canvas id="snow"></canvas>
 
     <div class="tree" id="tree">
       <div class="star"></div>
@@ -121,32 +222,121 @@
       <div class="layer"></div>
 
       <div class="trunk"></div>
+
+      <div class="gifts">
+        <div class="gift"></div>
+        <div class="gift"></div>
+        <div class="gift"></div>
+      </div>
     </div>
   </div>
+</div>
 
-  <script>
-    const colors = ["var(--red)","var(--blue)","var(--gold)","var(--pink)","var(--lime)","var(--ice)"];
-    const tree = document.getElementById("tree");
+<script>
+/* ---------- SNOW ---------- */
+const canvas=document.getElementById("snow");
+const ctx=canvas.getContext("2d");
+let flakes=[];
+function resize(){
+  canvas.width=canvas.offsetWidth;
+  canvas.height=canvas.offsetHeight;
+}
+window.onresize=resize;
+resize();
 
-    function rand(min,max){
-      return min + Math.random()*(max-min);
-    }
+for(let i=0;i<160;i++){
+  flakes.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*2+0.5,
+    s:Math.random()*1+0.5
+  });
+}
 
-    function createOrn(){
-      const o = document.createElement("div");
-      o.className = "orn";
-      o.style.left = rand(20,300) + "px";
-      o.style.top  = rand(80,430) + "px";
-      const c = colors[Math.floor(Math.random()*colors.length)];
-      o.style.background = c;
-      o.style.color = c;
-      tree.appendChild(o);
-    }
+function snow(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  flakes.forEach(f=>{
+    ctx.beginPath();
+    ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+    ctx.fillStyle="white";
+    ctx.fill();
+    f.y+=f.s;
+    if(f.y>canvas.height){f.y=0;f.x=Math.random()*canvas.width;}
+  });
+  requestAnimationFrame(snow);
+}
+snow();
 
-    for(let i=0;i<40;i++){
-      createOrn();
-    }
-  </script>
+/* ---------- DECOR ---------- */
+const tree=document.getElementById("tree");
+const colors=["var(--red)","var(--blue)","var(--gold)","var(--pink)","var(--lime)","var(--ice)"];
+
+for(let i=0;i<40;i++){
+  const o=document.createElement("div");
+  o.className="orn";
+  o.style.left=Math.random()*320+20+"px";
+  o.style.top=Math.random()*360+80+"px";
+  const c=colors[Math.floor(Math.random()*colors.length)];
+  o.style.background=c;
+  o.style.color=c;
+  tree.appendChild(o);
+}
+
+const lights=[];
+for(let i=0;i<30;i++){
+  const l=document.createElement("div");
+  l.className="light";
+  l.style.left=Math.random()*320+20+"px";
+  l.style.top=Math.random()*360+80+"px";
+  const c=colors[Math.floor(Math.random()*colors.length)];
+  l.style.color=c;
+  tree.appendChild(l);
+  lights.push(l);
+}
+
+/* ---------- MUSIC + SYNC ---------- */
+let audioCtx=null;
+let playing=false;
+const msg=document.getElementById("msg");
+const btn=document.getElementById("playBtn");
+
+function tone(freq,time){
+  const o=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  o.frequency.value=freq;
+  o.type="sine";
+  g.gain.value=0.15;
+  o.connect(g);
+  g.connect(audioCtx.destination);
+  o.start();
+  o.stop(audioCtx.currentTime+time);
+}
+
+btn.onclick=()=>{
+  if(!playing){
+    if(!audioCtx) audioCtx=new AudioContext();
+    msg.classList.add("active");
+    btn.textContent="⏸ Pause";
+    playing=true;
+
+    let i=0;
+    const melody=[523,659,784,659,698,784,880];
+    const interval=setInterval(()=>{
+      if(!playing){clearInterval(interval);return;}
+      tone(melody[i%melody.length],0.25);
+      lights.forEach(l=>{
+        l.style.opacity=Math.random();
+      });
+      i++;
+    },300);
+
+  }else{
+    playing=false;
+    msg.classList.remove("active");
+    btn.textContent="🎶 Play";
+  }
+};
+</script>
 
 </body>
 </html>
